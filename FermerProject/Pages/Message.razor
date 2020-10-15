@@ -1,0 +1,51 @@
+﻿@page "/message"
+
+
+<div class="main_container_0">
+    <div class="mess" align="center">
+        <div class="row">
+            <div class="col mt-3">
+                <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+                <p class="logo_text2">Smart Chicken</p>
+            </div>
+        </div>
+        <AuthorizeView>
+            <Authorized>
+                <div class="user_name ml-3">
+                    <h3><b>@context.User.Identity.Name</b></h3>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <div class="ml-3">
+            <h2 class="mess_sm">Благодарим за регистрацию!</h2>
+        </div>
+
+        <div class="row">
+            <p class="ml-3 text_rub">
+                <i>
+                    Участвуйте в опросах, делитесь своими видео, помогайте нам улучшать калькулятор пород и играйте в
+                    игру "Smart Chicken" прямо на сайте!
+                </i>
+            </p>
+        </div>
+        <br /><br /><br /><br />
+    </div>
+    @*<div class="row">
+        <div class="col">
+            <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+            <p class="logo_text2">Smart Chicken</p>
+        </div>
+    </div>
+    <div class="ml-3">
+        <h2>Благодарим за регистрацию!</h2>
+    </div>
+    <div class="row">
+        <p class="ml-3">
+            <i>
+                Участвуйте в опросах, помогайте нам улучшать калькулятор пород, и играйте в
+                игру "Smart Chicken" прямо на сайте!
+            </i>
+        </p>
+    </div>
+    <br /><br />*@
+</div>

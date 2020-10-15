@@ -1,0 +1,156 @@
+﻿@using FermerProject.Data
+@inject FermerProject.Data.Repository.IRepository repository
+@inject FermerProject.Data.Db db
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@page "/registerPage"
+
+<div class="main_container_0">
+
+    <h2><big>Регистрация</big></h2>
+    <br />
+    <span class="probel"><br /><br /></span>
+    <div class="container">
+
+        <div>
+            <div class="col logo_reg_mob" align="center">
+                <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+                <p class="logo_text3">Smart Chicken</p>
+                <p class="text_rub">
+                    <i>
+                        Участвуйте в опросах, делитесь своими видео, помогайте нам улучшать калькулятор пород и играйте в
+                        игру "Smart Chicken" прямо на сайте!
+                    </i>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 logo_reg" align="center">
+                <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+                <p class="logo_text3">Smart Chicken</p>
+                <p class="text_rub">
+                    <i>
+                        Участвуйте в опросах, делитесь своими видео, помогайте нам улучшать калькулятор пород и играйте в
+                        игру "Smart Chicken" прямо на сайте!
+                    </i>
+                </p>
+            </div>
+            <div class="log_col col-md-7 col-sm-9">
+                <div class="ml-md-5 ml-sm-2 mr-md-5 mr-sm-2">
+                    <EditForm Model="register" OnValidSubmit="@AddNewUser">
+                        @if (errorLog != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorLog</p>
+                        }
+                        @if (errorCheckLog != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorCheckLog</p>
+                        }
+                        <div class="row">
+                            <input class="form-control" maxlength="15" minlength="4" @bind-value="register.Name" placeholder="Логин" required />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <input type="email" class="form-control" @bind-value="register.Email" placeholder="Email" required />
+                        </div>
+                        <br />
+                        @if (errorCheckPassword != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorCheckPassword</p>
+                        }
+                        <div class="row">
+                            <input type="password" maxlength="20" minlength="6" size="40" class="form-control" @bind-value="register.Password" placeholder="Пароль" required />
+                        </div>
+                        <br />
+                        @if (errorPassword != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorPassword</p>
+                        }
+                        <div class="row">
+                            <input type="password" maxlength="20" minlength="6" size="40" class="form-control" @bind-value="register.ConfirmPassword" placeholder="Подтвердите пароль" required />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <input type="submit" class="form-control btn btn-primary" value="Зарегистрироваться" />
+                        </div>
+                    </EditForm>
+                    <div class="txt_log mt-4">
+                        <a href="loginPage"><i><b>Уже зарегистрированы?</b></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br /><br /><br /><br />
+
+</div>
+
+
+@code {
+    private Register register;
+
+    protected override Task OnInitializedAsync()
+    {
+        register = new Register();
+        return base.OnInitializedAsync();
+    }
+
+
+    string errorLog;
+    string errorCheckLog;
+    string errorPassword;
+    string errorCheckPassword;
+    private bool item;
+    private async void AddNewUser()
+    {
+        item = db.ExistUser(register.Name);
+
+
+
+        if (!string.IsNullOrWhiteSpace(register.Name)) //Проверяем, чтобы в качестве логина не был использован пробел
+        {
+            if (!string.IsNullOrWhiteSpace(register.Password)) //Проверяем, чтобы в качестве пароля не был использован пробел
+            {
+                if (item == false) //Проверяем, не был ли уже зарегистрирован юзер с таким именем
+                {
+                    if (register.Password == register.ConfirmPassword) //Совпадает ли пароль и его подтверждение
+                    {
+                        repository.AddUser(register);
+                        await ValidateUser();
+                    }
+                    else
+                    {
+                        errorPassword = "Пароль подтвержден неверно";
+                    }
+                }
+                else
+                {
+                    errorLog = "Пользователь с таким логином уже существует";
+                }
+            }
+            else
+            {
+                errorCheckPassword = "Не используйте пробел в качестве пароля";
+            }
+        }
+        else
+        {
+            errorCheckLog = "Не используйте пробел в качестве логина";
+        }
+    }
+
+
+
+    private async Task<bool> ValidateUser() // Авторизируемся (меняется название кнопки "Регистрация" и "Вход"   на   "имя пользователя" и "Выход") и переходим на страницу приветствия
+    {
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(register.Name);
+        NavigationManager.NavigateTo("/message");
+
+        await sessionStorage.SetItemAsync("userLogin", register.Name);
+
+        return await Task.FromResult(true);
+    }
+}

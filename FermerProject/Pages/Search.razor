@@ -1,0 +1,68 @@
+﻿@page "/mainLayout/search"
+@page "/mainLayout/search/{Word}"
+
+@using FermerProject.Data
+@inject LinkInfoProvider LinkService
+
+
+<div class="main_container_0">
+
+    <div class="container">
+
+
+        <div class="search_mob row mt-3 mb-5">
+            <input type="text" @bind="@Word" />
+            <button class="btn_search btn btn-primary ml-2" @onclick="OnParametersSet">Поиск</button>
+        </div>
+
+        <div class="row">
+
+            @if (c == null)
+            {
+                <h2></h2>
+            }
+            else
+            {
+                if (c.Count == 0)
+                {
+                    <p class="refer_mistake oi oi-x"><i><big> К сожалению, ничего не найдено</big></i></p>
+                }
+                if (c.Count > 0)
+                {
+                    <p class="refer_result oi oi-check"><i><big> Результаты поиска:</big></i></p>
+                }
+
+                foreach (LinkInfo linkInfo in c)
+                {
+                    <div class="row searh_info mt-5">
+                        <div class="col-lg-2 col-md-4 col-sm-4">
+                            <div class="tema_interes_culc">
+                                <a href="@linkInfo.Link"><img class="img-fluid tema_img" src="@linkInfo.Img" /><h5 class="tema_name"><small>@linkInfo.Name</small></h5></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-10 col-md-8 col-sm-8 mt-4">
+                            <a href="@linkInfo.Link"><small>@linkInfo.Info</small></a>
+                        </div>
+                    </div>
+                }
+            }
+            <br />
+        </div>
+        @code {
+
+            List<LinkInfo> c;
+
+            [Parameter]
+            public string Word { get; set; }
+
+            protected override void OnParametersSet()
+            {
+                if (Word != null)
+                {
+                    c = LinkInfoProvider.TextSearch(Word.ToLower());
+
+                }
+            }
+        }
+    </div>
+</div>

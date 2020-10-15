@@ -1,0 +1,126 @@
+﻿@using FermerProject.Data
+@inject FermerProject.Data.Repository.IRepository repository
+@inject FermerProject.Data.Db db
+@inject NavigationManager NavigationManager
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@page "/loginPage"
+
+<div class="main_container_0">
+
+    <h2><big>Вход</big></h2>
+    <br />
+    <span class="probel"><br /><br /></span>
+    <div class="container">
+        <div>
+            <div class="col logo_reg_mob" align="center">
+                <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+                <p class="logo_text3">Smart Chicken</p>
+                <p class="text_rub">
+                    <i>
+                        Участвуйте в опросах, делитесь своими видео, помогайте нам улучшать калькулятор пород и играйте в
+                        игру "Smart Chicken" прямо на сайте!
+                    </i>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-5 logo_reg" align="center">
+                <img class="mr-2 chicken" src="/img/Logo.png" height="60" /><br />
+                <p class="logo_text3">Smart Chicken</p>
+                <p class="text_rub">
+                    <i>
+                        Участвуйте в опросах, делитесь своими видео, помогайте нам улучшать калькулятор пород и играйте в
+                        игру "Smart Chicken" прямо на сайте!
+                    </i>
+                </p>
+            </div>
+            <div class="log_col col-md-7 col-sm-9">
+                <div class="ml-md-5 ml-sm-2 mr-md-5 mr-sm-2">
+                    <EditForm Model="register" OnValidSubmit="@LogUser">
+
+                        @if (errorLog != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorLog</p>
+                        }
+                        <div class="row">
+                            <input class="form-control" @bind-value="register.Name" placeholder="Логин" required />
+                        </div>
+                        <br />
+                        @if (errorPass != null)
+                        {
+                            <p class="refer_mistake"> <big>&middot;</big> @errorPass</p>
+                        }
+                        <div class="row">
+                            <input type="password" maxlength="25" size="40" class="form-control" @bind-value="register.Password" placeholder="Пароль" required />
+                        </div>
+                        <br />
+                        <div class="row">
+                            <input type="submit" class="form-control btn btn-primary" value="Войти" />
+                        </div>
+                    </EditForm>
+                    <div class="txt_log mt-4">
+                        <a href="registerPage"><i><b>Еще не зарегистрированы?</b></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br /><br /><br /><br />
+
+</div>
+
+
+@code {
+
+
+    private Register register;
+
+    protected override Task OnInitializedAsync()
+    {
+        register = new Register();
+        return base.OnInitializedAsync();
+    }
+
+
+
+    string errorLog;
+    string errorPass;
+    private bool itemLog;
+    private bool itemPass;
+    private async void LogUser()
+    {
+        itemLog = db.ExistUser(register.Name);
+        itemPass = db.ExistPassword(register.Name, register.Password);
+
+        if (itemLog == true) //Проверяем, точно ли юзер с таким логином зарегистрирован
+        {
+            if (itemPass == true) //Проверяем соответствие логина и пароля
+            {
+                await ValidateUser();
+            }
+            else
+            {
+                errorPass = "Неверный пароль";
+            }
+        }
+        else
+        {
+            errorLog = "Пользователь с таким логином не найден";
+        }
+    }
+
+
+
+    private async Task<bool> ValidateUser() // Авторизируемся (меняется название кнопки "Регистрация" и "Вход"   на   "имя пользователя" и "Выход") и переходим на страницу профиля
+    {
+        ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsAuthenticated(register.Name);
+        NavigationManager.NavigateTo("/profile");
+
+        await sessionStorage.SetItemAsync("userLogin", register.Name);
+
+        return await Task.FromResult(true);
+    }
+}

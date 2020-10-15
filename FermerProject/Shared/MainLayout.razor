@@ -1,0 +1,255 @@
+﻿@page "/mainLayout"
+@inherits LayoutComponentBase
+
+@using FermerProject.Data
+@inject LinkInfoProvider LinkService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<img class="img-fluid fon" src="/img/fon.jpg" />
+
+<div class="bkgr">
+    <div class="sidebar">
+        <NavMenu />
+
+        <div class="left_col">
+            <div class="row reklama_tut">
+                <div class="reklama1">
+                    <img class="pt-3" src="/img/rekl2.jpg" width="200" />
+                </div>
+                <div class="reklama1">
+                    <img class="pt-3" src="/img/rekl4.jpg" width="200" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row reklama_tut">
+                <h3>Новости</h3>
+            </div>
+            <hr />
+            <br />
+            <div class="row news">
+                <p>
+                    <big><b>Новая статья:</b></big>
+                </p>
+            </div>
+            <div class="row news">
+                <p><a href="htema2"><h5 class="tema_name">Бройлеры. Почему у одних эти птицы растут как на дрожжах, а у других сплошное разочарование.</h5></a></p>
+            </div>
+            <br /><br /><br /><hr /><br />
+
+            <div class="row news">
+                <p>
+                    <big><b>Новая статья:</b></big>
+                </p>
+            </div>
+            <div class="row news">
+                <p><a href="hqtema1"><h5 class="tema_name">Куры или перепела? Важные советы, о которых забывают. А зря!</h5></a></p>
+            </div>
+            <br /><br /><hr /><br /><br />
+        </div>
+    </div>
+
+</div>
+
+
+<div class="main">
+    <div class="top-row px-3">
+        <div class="row search">
+            <div class="search_komp form-inline mt-2 mt-md-0">
+                <input class="form-control mr-sm-2" type="text" @bind="@SomeWord" placeholder="Поиск" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" @onclick="WordForSearch">Поиск</button>
+            </div>
+
+            @code {
+                public string SomeWord { get; set; }
+
+                public void WordForSearch()
+                {
+                    NavigationManager.NavigateTo("/mainLayout/search/" + SomeWord);
+
+                }
+            }
+
+            <div class="search_mobile form-inline ml-2 mr-4">
+                <a href="mainLayout/search" class="btn btn-outline-success oi oi-magnifying-glass my-2 my-sm-0"></a>
+            </div>
+
+
+
+            <AuthorizeView>
+                <Authorized>
+                    <a href="profile" class="registration oi oi-person"><span class="reg"> @context.User.Identity.Name</span></a>
+                    <a href="loginPage" class="registration oi oi-account-logout" @onclick="(() => Logout())"><span class="log"> Выход</span></a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="registerPage" class="registration oi oi-person"><span class="reg"> Регистрация</span></a>
+                    <a href="loginPage" class="registration oi oi-account-login"><span class="log"> Вход</span></a>
+                </NotAuthorized>
+            </AuthorizeView>
+
+            @code {
+                public void Logout()
+                {
+                    ((CustomAuthenticationStateProvider)AuthenticationStateProvider).MarkUserAsLoggedOut();
+                }
+            }
+
+
+
+
+            <div class="slogan">
+                <img class="slogan_img mr-2" src="/img/z.png" height="20" />
+                <a href="culc"><h5 class="name_color font_culc"><small>Калькулятор вашего подсобного хозяйства</small></h5></a>
+            </div>
+        </div>
+        <div class="row top_anime"></div>
+    </div>
+
+    <div class="row reklama_tut_mob">
+        <div class="reklama1">
+            <img class="pt-3" src="/img/rekl2.jpg" width="200" />
+        </div>
+        <div class="reklama1">
+            <img class="pt-3" src="/img/rekl4.jpg" width="200" />
+        </div>
+    </div>
+
+
+    <div class="content px-4">
+        @Body
+    </div>
+
+
+
+    <div class="container tema_tut_culc mt-2">
+        <br />
+        <h4 class="mb-2"><b>Самые популярные калькуляторы рентабельности пород:</b><br /></h4>
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_c">
+                    <a href="@c1.Link"><img class="img-fluid tema_img" src="@c1.Img" /><h5 class="tema_name">@c1.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_c">
+                    <a href="@c2.Link"><img class="img-fluid tema_img" src="@c2.Img" /><h5 class="tema_name">@c2.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_c">
+                    <a href="@c3.Link"><img class="img-fluid tema_img" src="@c3.Img" /><h5 class="tema_name">@c3.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_c">
+                    <a href="@c4.Link"><img class="img-fluid tema_img" src="@c4.Img" /><h5 class="tema_name">@c4.Name</h5></a>
+                </div>
+            </div>
+        </div>
+        <br />
+        <a href="culc" class="mb-2 refer"><b><i>>>Перейти к списку всех калькуляторов</i></b></a>
+        <br /><br />
+    </div>
+
+
+
+
+    <div class="container tema_tut">
+        <br />
+        <h4 class="mb-2"><b>Другие интересные темы:</b><br /></h4>
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_i">
+                    <a href="@t1.Link"><img class="img-fluid tema_img" src="@t1.Img" /><h5 class="tema_name">@t1.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_i">
+                    <a href="@t2.Link"><img class="img-fluid tema_img" src="@t2.Img" /><h5 class="tema_name">@t2.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_i">
+                    <a href="@t3.Link"><img class="img-fluid tema_img" src="@t3.Img" /><h5 class="tema_name">@t3.Name</h5></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="tema_i">
+                    <a href="@t4.Link"><img class="img-fluid tema_img" src="@t4.Img" /><h5 class="tema_name">@t4.Name</h5></a>
+                </div>
+            </div>
+        </div>
+        <br />
+        <a href="#" class="mb-2 refer"><b><i>>>Перейти к списку всех интересных тем</i></b></a>
+        <br /><br />
+    </div>
+
+
+
+    @code {
+
+        public LinkInfo c1;
+        public LinkInfo c2;
+        public LinkInfo c3;
+        public LinkInfo c4;
+
+        public LinkInfo t1;
+        public LinkInfo t2;
+        public LinkInfo t3;
+        public LinkInfo t4;
+
+        protected override void OnInitialized()
+        {
+            c1 = LinkInfoProvider.GetRandomLink();
+            c2 = LinkInfoProvider.GetRandomLink(c1);
+            c3 = LinkInfoProvider.GetRandomLink(c1, c2);
+            c4 = LinkInfoProvider.GetRandomLink(c1, c2, c3);
+
+            t1 = LinkInfoProvider.GetRandomLinkTema();
+            t2 = LinkInfoProvider.GetRandomLinkTema(t1);
+            t3 = LinkInfoProvider.GetRandomLinkTema(t1, t2);
+            t4 = LinkInfoProvider.GetRandomLinkTema(t1, t2, t3);
+        }
+    }
+
+
+
+    <div class="main_container_0">
+        <br />
+        <br />
+        <br />
+        <br />
+        <div class="container">
+            <div class="row reklama_tut">
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl1.jpg" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl3.jpg" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl2.jpg" />
+                </div>
+            </div>
+            <div class="row mt-3 reklama_tut">
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl5.jpg" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl1.jpg" />
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4 reklama2">
+                    <img class="img-fluid" src="/img/rekl4.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p class="footer_text">Копирование материалов сайта разрешено с указанием активной ссылки на <a href="#">smart-chicken.ru</a></p>
+        <p class="footer_text">&copy;2020 &middot; <a href="#">Читайте наш канал на Яндекс.Дзен: Умная курочка &middot;</a></p>
+    </div>
+</div>
